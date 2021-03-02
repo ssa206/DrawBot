@@ -6,18 +6,6 @@ let worldDim = 60;
 
 let pickStartNode, pickEndNode, startPathFinding, dropObstacles;
 
-// let start_button = document.getElementById('set-start');
-// // let place_obstacles = document.getElementById('place-obstacles');
-// let end_button = document.getElementById('set-end');
-// let path_find_button = document.getElementById('start');
-// let reset_button = document.getElementById('reset-button');
-
-// start_button.addEventListener('click', buttonModeSelector);
-// // place_obstacles.addEventListener('click', buttonModeSelector);
-// end_button.addEventListener('click', buttonModeSelector);
-// path_find_button.addEventListener('click', buttonModeSelector);
-// reset_button.addEventListener('click', buttonModeSelector);
-
 
 class Node{
     constructor(nodeName, nextNode, previousNode){
@@ -107,7 +95,6 @@ function createGrid(width, height){
             col.setAttribute('class', `${i}`);
             col.setAttribute('id', `${j}`);
             row.appendChild(col);
-            //col.addEventListener('click', setState);
             col.addEventListener('mousemove', setState);
 
             //Add the node to the world_grid array
@@ -255,18 +242,6 @@ function findPath(){
                             continue;
                         }
 
-                        // //g-Cost = 14 if childnode is diagonally away from the current node
-                        // if ((childNode.row === currentNode.row - 1 || childNode.row === currentNode.row + 1) && (childNode.col === currentNode.col - 1 || childNode.col === currentNode.col + 1))
-                        // {
-                        //     //Calculate the g-cost for the childnode
-                        //     childNode.gCost = currentNode.gCost + 100;
-                        // }
-                        // else
-                        // {
-                        //     //Calculate the g-cost for the childnode
-                        //     childNode.gCost = currentNode.gCost + 10;
-                        // }
-
                         childNode.gCost = currentNode.gCost + 10;
                         childNode.hCost = (childNode.row - endNode.row)** 2 + (childNode.col - endNode.col) ** 2;
                         childNode.fCost = childNode.gCost + childNode.hCost;
@@ -281,7 +256,6 @@ function findPath(){
                             }  
                         }
                         //Seeing the childnode for the first time
-                        //childNode.previousNode = currentNode;
                         openList.push(childNode);
                         console.log(`Added node ${childNode.nodeName} to the openlist`);
                         console.log(`Node ${childNode.nodeName} gCost:${childNode.gCost} hCost:${childNode.hCost} has parent:${childNode.previousNode.nodeName}`);
