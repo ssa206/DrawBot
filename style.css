@@ -1,0 +1,26 @@
+body {
+  background-color: #090d23;
+}
+
+td {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  margin: 5px;
+}
+
+#start_node {
+  background-color: #edffa3;
+}
+
+#end_node {
+  background-color: #ffddbf;
+}
+
+.obstacle {
+  background-color: cornflowerblue;
+}
+
+.path {
+  background-color: #ff35a6;
+}
