@@ -1,5 +1,8 @@
 body {
   background-color: #090d23;
+  color: #fff;
+  font-family: sans-serif;
+  text-align: center;
 }
 
 td {
@@ -23,4 +26,24 @@ td {
 
 .path {
   background-color: #ff35a6;
+}
+
+canvas {
+  display: block;
+  margin: 20px auto;
+}
+
+#three-container {
+  height: 500px;
+}
+
+#grid {
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+.info {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }

@@ -1,8 +1,13 @@
 let world;
 let startNode;
 let endNode;
-let fullPathlist; 
+let fullPathlist;
 let worldDim = 60;
+
+// three.js globals
+let scene, camera, renderer, controls;
+let cubes = [];
+let cubeGroup;
 
 let pickStartNode, pickEndNode, startPathFinding, dropObstacles;
 
@@ -67,6 +72,69 @@ class List{
 
 }
 
+function initThree(width, height){
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / 500, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, 500);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setClearColor(0x090d23);
+    document.getElementById('three-container').appendChild(renderer.domElement);
+    camera.position.set(width / 2, height, height * 1.5);
+    camera.lookAt(width / 2, 0, height / 2);
+
+    cubeGroup = new THREE.Group();
+    scene.add(cubeGroup);
+
+    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambient);
+    const dir = new THREE.DirectionalLight(0xffffff, 0.5);
+    dir.position.set(0, 10, 10);
+    scene.add(dir);
+
+    const geometry = new THREE.BoxGeometry(0.9, 0.9, 0.9);
+    for(let i=0;i<height;i++){
+        cubes[i] = [];
+        for(let j=0;j<width;j++){
+            const material = new THREE.MeshStandardMaterial({color: 0xffffff});
+            const cube = new THREE.Mesh(geometry, material);
+            cube.position.set(j, 0, i);
+            cubeGroup.add(cube);
+            cubes[i][j] = cube;
+        }
+    }
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    animate();
+}
+
+function animate(){
+    requestAnimationFrame(animate);
+    cubeGroup.rotation.y += 0.005;
+    if(controls) controls.update();
+    renderer.render(scene, camera);
+}
+
+function updateCubeColor(row, col, color){
+    if(cubes[row] && cubes[row][col]){
+        cubes[row][col].material.color.set(color);
+    }
+}
+
+function animatePath(node){
+    const steps = [];
+    let current = node;
+    while(current){
+        steps.unshift(current);
+        current = current.previousNode;
+    }
+    steps.forEach((n, i) => {
+        setTimeout(() => {
+            updateCubeColor(n.row, n.col, 0xff35a6);
+        }, i * 100);
+    });
+}
+
 //Create a visualiztion of the grid 
 function createGrid(width, height){
     function initWorldArray(rows,cols){
@@ -83,6 +151,7 @@ function createGrid(width, height){
     let grid_width = width;
     let grid_height = height;
     world = (initWorldArray(grid_height, grid_width));
+    initThree(grid_width, grid_height);
 
     for(let i = 0; i < grid_height; i++){
         //Create a row
@@ -121,18 +190,21 @@ function setState(){
         cn += this.className[1];
     }
 
-    console.log("Pressed Button in row:" + cn +" column:" + this.id + "isobstacle:"+world[cn][this.id].isObstacle);
+    console.log("Pressed Button in row:" + cn +" column:" + this.id + " isobstacle:"+world[cn][this.id].isObstacle);
     //Set the startNode
     if(pickStartNode){
         //if there already is a startnode, and we want to modify it
         if(startNode){
-            document.getElementById('start_node').setAttribute('id', 'td');
+            let prev = document.getElementById('start_node');
+            prev.setAttribute('id', `${startNode.col}`);
+            updateCubeColor(startNode.row, startNode.col, 0xffffff);
             startNode = null;
         }
         //Creates a new start node
         let node = document.getElementsByClassName(this.className);
         startNode = world[cn][this.id];
         node[this.id].setAttribute('id', 'start_node');
+        updateCubeColor(startNode.row, startNode.col, 0xedffa3);
         pickStartNode = false;
     }
     
@@ -140,13 +212,16 @@ function setState(){
     else if(pickEndNode){
         //if there already is a startnode, and we want to modify it
         if(endNode){
-            document.getElementById('end_node').setAttribute('id', 'td');
+            let prev = document.getElementById('end_node');
+            prev.setAttribute('id', `${endNode.col}`);
+            updateCubeColor(endNode.row, endNode.col, 0xffffff);
             endNode = null;
         }
         //Creates a new start node
         let node = document.getElementsByClassName(this.className);
         endNode = world[this.className][this.id];
         node[this.id].setAttribute('id', 'end_node');
+        updateCubeColor(endNode.row, endNode.col, 0xffddbf);
         pickEndNode = false;
 
     }
@@ -156,6 +231,7 @@ function setState(){
         if(this.id !== 'start_node' && this.id !== "end_node"){
             world[cn][this.id].isObstacle = true;
             this.setAttribute('class', `${cn} obstacle`);
+            updateCubeColor(parseInt(cn), parseInt(this.id), 0x6495ed);
         }
     }
 }
@@ -181,6 +257,7 @@ window.addEventListener('keydown', (e)=>{
 function updatePathUI(){
     let l = new List(endNode);
     l.traverseNodeChain();
+    animatePath(endNode);
 }
 
 createGrid(worldDim,worldDim);

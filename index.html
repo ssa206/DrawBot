@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>DrawBot</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
     <script src="./testScript.js" defer></script>
 </head>
 <body>
 
+    <h1>DrawBot</h1>
+    <div id="three-container"></div>
     <table id="grid"></table>
-    
+    <p class="info">Press "S" to set start, "E" for end, "Esc" for obstacles, "Enter" to run.</p>
 
 </body>
 </html>
